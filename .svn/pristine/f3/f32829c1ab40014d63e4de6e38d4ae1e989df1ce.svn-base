@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="application/x-www-form-urlencoded; charset=UTF-8">
+<meta http-equiv="Content-Type" content="application/x-www-form-urlencoded; charset=UTF-8">
+<meta name=“viewport” content=“width=device-width， initial-scale=1.0”>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta http-equiv="Expires" content="-1">   
+<meta http-equiv="Content-Type" content="application/x-www-form-urlencoded; charset=UTF-8">
+
+<title>祝福投票</title>
+<link href='${BasePath}/css/global.css?t=2013122302' rel='stylesheet' type='text/css' />
+<link href='${BasePath}/css/main.css?t=2013122302' rel='stylesheet' type='text/css' />
+<link href='${BasePath}/css/lanterngame.css?t=2013122302' rel='stylesheet' type='text/css' />
+	<script type="text/javascript">
+	  var BasePath="${BasePath}"; 	
+	</script>
+</head>
+	
+	<body style="background:url('../images/bj.jpg') no-repeat;background-size:100% ">
+		<div style="color:white; width:80%;margin:0 auto;">
+			<form action="${BasePath}/lanterngame/toLantenGame.kq">
+				<h1>晒祝福投票游戏及规则介绍</h1>
+				<p>	a)关注后点我要报名，弹出报名信息录入页面<br>
+					b)每个工号只能上传一次参赛作品（在报名须知中提醒参赛者慎重提交作品，提交后不允许修改<br>
+					c)票数排名前100名可再获得2枚约章，员工投票投中前100名也可获得1枚约章；活动时间结束后，系统自动追加约章<br>
+				</p>
+				<input type="submit" value="开始游戏"/>
+			</form>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,233 @@
+package com.qixin.app.vote.service.impl;
+
+import java.io.Serializable;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import antlr.Utils;
+
+import com.qixin.app.lanterngame.model.EmpInfo;
+import com.qixin.app.lanterngame.model.IjferUser;
+import com.qixin.app.lanterngame.model.QuizTopic;
+import com.qixin.app.vote.dao.IVoteApplyDao;
+import com.qixin.app.vote.dao.VoteDao;
+import com.qixin.app.vote.dao.WxVoteDao;
+import com.qixin.app.vote.model.Vote;
+import com.qixin.app.vote.model.VoteApply;
+import com.qixin.app.vote.model.WxVote;
+import com.qixin.app.vote.service.VoteService;
+import com.qixin.platform.persistent.database.basedao.CritMap;
+import com.qixin.platform.persistent.database.basedao.PageFinder;
+import com.qixin.platform.persistent.database.basedao.Query;
+
+@Service
+public class VoteServiceImpl implements VoteService{
+
+	@Resource
+	private WxVoteDao wxVoteDao;
+	@Resource
+	private VoteDao voteDao;
+	
+	@Resource
+	private IVoteApplyDao ivoteApplyDao;
+
+	//--------------wxvote----------------
+	@Override
+	public String addWxVote(WxVote wxVote) throws Exception {
+		return (String) wxVoteDao.save(wxVote);
+	}
+
+	@Override
+	public List<WxVote> getWxVote() throws Exception {
+		return wxVoteDao.getAll();
+	}
+	/**
+	 * 根据报名表vote_apply表的voteId字段查询wx_vote表的数据
+	 * 多条数据，集合
+	 */
+	@Override
+	public List<WxVote> getWxVoteByVoteId(String voteId) throws Exception {
+		return wxVoteDao.getWxVoteByVoteId(voteId);
+	}
+
+	/**
+	 * 取谁投的
+	 * @param voteId
+	 * @return
+	 * @throws Exception
+	 */
+	public List<WxVote> getWxVoteByJobNum(String empNumber) throws Exception {
+		CritMap critMap = new CritMap();
+        critMap.addEqual("empNumber", empNumber);
+        return  wxVoteDao.findByCritMap(critMap, true);
+	}
+	
+	
+	@Override
+	public WxVote getWxvoteByid(String id) throws Exception {
+		return wxVoteDao.getById(id);
+	}
+
+	@Override
+	public String removeWxVote(String id) throws Exception {
+		return (String) wxVoteDao.removeById(id);
+	}
+
+
+	@Override
+	public WxVote updateWxVote(WxVote wxVote) throws Exception {
+		return wxVoteDao.merge(wxVote);//merge方法：检查数据是否存在，存在则修改，不存在则添加
+	}
+
+	//-----vote------
+	@Override
+    public String addVote(Vote paramSecret) throws Exception
+    {
+        return (String) this.voteDao.save(paramSecret);
+    }
+    
+    @Override
+    public PageFinder<Vote> getVoteByBid(Query query, String bid)
+            throws Exception
+    {
+        CritMap critMap = new CritMap();
+        critMap.addEqual("bizid", bid);
+        return (PageFinder<Vote>) this.voteDao.pagedByCritMap(critMap,
+                query.getPage(), query.getPageSize());
+    }
+
+    
+
+    /**
+     * 条件查询id
+     */
+    @Override
+    public Vote getVoteByid(String id) throws Exception
+    {
+//        CritMap critMap = new CritMap();
+//        critMap.addEqual("id", id);
+//        return (Vote) this.votedao.getObjectByCritMap(critMap,
+//                new boolean[] { true });
+    	Vote vote = this.voteDao.getById(id);
+    	return vote;
+    }
+
+    @Override
+    public boolean removeVote(String id) throws Exception
+    {
+        Vote vote = this.voteDao.getById(id);
+        if (vote != null)
+        {
+            this.voteDao.remove(vote);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List<Vote> getVoteByBid(String bid) throws Exception
+    {
+        CritMap critMap = new CritMap();
+        critMap.addEqual("bizid", bid);
+        return (List<Vote>) this.voteDao.findByCritMap(critMap,
+                new boolean[] { true });
+    }
+
+    @Override
+    public String updateVote(Vote vote) throws Exception
+    {
+        Vote pt = (Vote) this.voteDao.merge(vote);
+        return pt.getId();
+    }
+	/**
+	 * 查询表
+	 */
+	@Override
+	public Vote getVote() throws Exception {
+		List<Vote> votes = this.voteDao.getAll();
+		Vote vote;
+		if (votes == null || votes.size() == 0) {
+			// 先在汇总信息表插入晒祝福投票记录
+			vote = new Vote();
+			vote.setPassCount(0);
+			vote.setSignCount(0);
+			vote.setLookCount(0);
+			vote.setVoteTotalCount(0);
+			this.addVote(vote);
+		} else {
+			vote = votes.get(0);
+		}
+		return vote;
+	}
+
+
+	
+	@Override
+	public Serializable deleteVoteApplyById(Serializable itemId)
+			throws Exception {
+		return ivoteApplyDao.removeById(itemId);
+	}
+
+	@Override
+	public String saveVoteApply(VoteApply voteApply) throws Exception {
+		return (String)ivoteApplyDao.save(voteApply);
+	}
+
+	@Override
+	public VoteApply updateVoteApply(VoteApply voteApply) {
+		return ivoteApplyDao.merge(voteApply);
+	}
+
+	@Override
+	public VoteApply getVoteApplyByID(Serializable voteApplyId) {
+		return ivoteApplyDao.getById(voteApplyId);
+	}
+
+	@Override
+	public VoteApply getVoteApplyByCode(String code) throws Throwable {
+		
+		return ivoteApplyDao.getVoteApplyByCode(com.qixin.app.lanterngame.util.Utils.addZeroForJobNumbe(code));
+	}
+
+	public VoteApply getVoteApplyByName(String name) throws Throwable {
+		CritMap critMap = new CritMap();
+    	critMap.addLike("name",name);
+    	List<VoteApply> list= ivoteApplyDao.findByCritMap(critMap, true);
+    	if(list!=null&&list.size()>0){
+    		return list.get(0);
+    	}else{
+    		return null;
+    	}
+	}
+	
+	
+	@Override
+	public List<VoteApply> getVoteApplyList() {
+		return ivoteApplyDao.getAll();
+	}
+
+	@Override
+	public List<VoteApply> getVoteApplyPass() throws Exception {
+			CritMap critMap = new CritMap();
+	        critMap.addEqual("status", 1);
+	        return  ivoteApplyDao.findByCritMap(critMap, true);
+	}
+
+	@Override
+	public List<WxVote> getWxvoteByOpenId(String openId) throws Exception {
+		CritMap critMap = new CritMap();
+        critMap.addEqual("openId", openId);
+        return  wxVoteDao.findByCritMap(critMap, true);
+	}
+
+	@Override
+	public PageFinder<WxVote> findWxVoteByPageFinder(String id,Query query) {
+		CritMap critMap = new CritMap();
+		critMap.addEqual("openId", id);
+		return wxVoteDao.pagedByCritMap(critMap, query.getPage(), query.getPageSize());
+	}
+	
+}

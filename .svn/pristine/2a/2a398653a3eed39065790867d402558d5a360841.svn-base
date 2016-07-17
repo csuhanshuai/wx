@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="application/x-www-form-urlencoded; charset=UTF-8">
+<meta http-equiv="Content-Type" content="application/x-www-form-urlencoded; charset=UTF-8">
+<meta name=“viewport” content=“width=device-width， initial-scale=1.0”>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta http-equiv="Expires" content="-1">   
+<meta http-equiv="Content-Type" content="application/x-www-form-urlencoded; charset=UTF-8">
+
+<title>活动说明</title>
+<link href='${BasePath}/css/global.css?t=2013122302' rel='stylesheet' type='text/css' />
+<link href='${BasePath}/css/main.css?t=2013122302' rel='stylesheet' type='text/css' />
+<link href='${BasePath}/css/lanterngame.css?t=2013122302' rel='stylesheet' type='text/css' />
+
+<style>
+*{ -webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-tap-highlight-color: transparent; /* For some Androids */ }
+*{margin:0; padding:0; border:0; font-size:4vw; line-height:7vw; font-family:"微软雅黑";}
+a, img, input, th, select { border:0;}
+a { text-decoration:none;}
+.whole{width:90vw;  margin:0 auto;} 
+.top{width:90vw; height:30vw; float:left; background:#00C}
+.jscontent{width:80vw; height:100%; top:40vw; padding:5vw; float:left;background:rgba(240,255,255,0.5); border-radius:2.5vw; margin-top:60vw;  }
+.jstj{width:30vw; height:9.5vw; background:url(../images/ksyx.png) no-repeat;background-size:100%; border:0; margin:3vw 8vw; border-radius:2vw;outline:none;}
+.kk{width:90vw; height:5vw; float:left;}
+</style>
+
+
+<style>
+/*灰色主题*/
+ .toollist_gray { 	border-top: 1px solid #3D3D46; 	background-image:linear-gradient(top, #697077, #464A53 60%, #3F434E); 	background-image:-o-linear-gradient(top, #697077, #464A53 60%, #3F434E); 	background-image:-ms-linear-gradient(top, #697077, #464A53 60%, #3F434E); 	background-image:-moz-linear-gradient(top, #697077, #464A53 60%, #3F434E); 	background-image:-webkit-linear-gradient(top, #697077, #464A53 60%, #3F434E );  	box-shadow: 0 1px 0 #949494 inset; 	-moz-box-shadow:0 1px 0 #949494 inset; 	-webkit-box-shadow:0 1px 0 #949494 inset; 	-o-box-shadow:0 1px 0 #949494 inset; } .toollist_gray li{ border-right: 1px solid rgba(128, 128, 128, 0.6);} .toollist_gray li a {color: #fff;}
+
+/*底部固定工具条*/
+#tool { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
+ul.toollist { position: fixed; z-index: 900; bottom: 0; left: 0; right: 0;margin: auto; display: block; height: 54px;}
+.toollist li{ float:left;width: auto;  height: 100%;width:25%;
+position: static!important;  margin: 0;
+border-radius: 0!important; -webkit-box-sizing: border-box;
+box-sizing: border-box; -webkit-box-flex: 1; box-flex: 1;
+-webkit-box-sizing: border-box; box-shadow: none!important; background: none;
+}
+.toollist li a {font-size: 20px;line-height: 20px;text-align: center;display: block;text-decoration: none;padding-top: 2px;position:relative;}
+.toollist li a img{width:30px;height:30px;}
+.toollist li a p{margin: 1px 0 1px 0;font-size: 14px;display: block !important;line-height: 18px;text-align: center;}
+</style>
+	<script type="text/javascript">
+	  var BasePath="${BasePath}"; 	
+	</script>
+</head>
+	
+	<body style="background:url('../images/bj2.jpg') no-repeat;">
+	<div class="whole">
+  <div class="jscontent">
+			<h1 style="font-size:6vw; line-height:10vw;">晒祝福投票活动说明：</h1>
+				<p>	1、员工可以晒出收到部门（或其他人）相应的中秋祝福，或给送其他人中秋祝福的感动瞬间。<br>
+					2、图片或者视频中包含自己（他人）以及收到的礼物，可以多张图合成一张。<br>
+					3、每个工号只能上传一次参赛作品,参赛者需慎重提交作品,提交后不允许修改。<br>
+					4、票数排名前100名可再获得2枚约章,员工投票投中前100名也可获得1枚约章,活动时间结束后,系统自动追加约章。<br>
+				</p>	
+		</div>
+    <div class="kk"></div>
+</div>
+<div class="wholea"></div>
+		
+		<div id="tool">
+	<ul class="toollist toollist_gray">
+		<li><a href="${BasePath}/vote/getIndexInformation.kq"><img src="../images/home.jpg"><p>首页</p></a>
+		</li>
+		<li><a href="${BasePath}/vote/voteApplyRankService.kq"><img src="../images/rank.png"><p>排行榜</p></a>
+		</li>
+		<#if hasVoteApply == 2>
+		<li><a href="javascript:tishi2();"><img src="../images/apply.png"><p>我要报名</p></a>
+		</li>
+		<#elseif hasVoteApply == 1>
+		<li><a href="javascript:tishi();"><img src="../images/apply.png"><p>我要报名</p></a>
+		</li>
+		<#else>
+		<li><a href="${BasePath}/vote/voteApplyIndex.kq"><img src="../images/apply.png"><p>我要报名</p></a>
+		</li>
+		</#if>
+		<li><a href="${BasePath}/vote/activitesInfomation.kq"><img src="../images/activity.png"><p>活动说明</p></a>
+		</li>
+	</ul>
+</div>
+		
+	</body>
+
+<script>
+function tishi() {
+	alert("您已经报过名！");
+}	
+</script>
+</html>

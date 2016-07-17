@@ -1,0 +1,735 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="application/x-www-form-urlencoded; charset=UTF-8">
+<meta name=“viewport” content=“width=device-width， initial-scale=1.0”>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta http-equiv="Expires" content="-1">   
+<meta http-equiv="Content-Type" content="application/x-www-form-urlencoded; charset=UTF-8">
+<title>首页</title>
+<link rev="stylesheet" rel="stylesheet" type="text/css" href="${BasePath}/css/thickbox.css"  media="screen" />
+<link href='${BasePath}/css/global.css' rel='stylesheet' type='text/css' />
+<link href='${BasePath}/css/main.css' rel='stylesheet' type='text/css' />
+<script type="text/javascript"  src="${BasePath}/js/common/thickbox/thickbox.js"></script>
+<script type='text/javascript' src='${BasePath}/js/jquery-1.7.2.min.js'></script>
+
+<!--[if lte IE 9]>
+<script type='text/javascript' src='${BasePath}/js/jquery.watermark-1.3.js'></script>
+<![endif]-->
+<link href='${BasePath}/css/wechat.css' rel='stylesheet' type='text/css' />
+<style>
+
+
+#ticker { width:100%; height:150px; border:0px solid #aaaaaa; overflow:auto; }
+#ticker dt { font:normal 14px Georgia; padding:0 10px 5px 10px; background-color:rgba(0,0,0,0); padding-top:10px; border:0px solid #ffffff; border-bottom:none; border-right:none; position:relative; }
+#ticker dd { margin-left:0; font:normal 11px Verdana; padding:0 10px 10px 10px; border-bottom:0px solid #aaaaaa; background-color:rgba(0,0,0,0); border-left:0px solid #ffffff; position:relative; }
+#ticker dd.last { border-bottom:0px solid #ffffff; }
+#ticker div { margin-top:0; }
+
+button {
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+}
+.paginate {
+  position: fixed; bottom: 30px; left: 0; right: 0; z-index: 900;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transform: translate3d(0, 0, 0);
+  position: absolute;
+  margin-top: -20px;
+  -webkit-filter: drop-shadow(0 2px 0px rgba(0, 0, 0, 0.2));
+}
+.div-height{width:100%; height:120px ;display:inline-block;} 
+.paginate i {
+  position: absolute;
+  top: 40%;
+  left: 0;
+  width: 30px;
+  height: 5px;
+  border-radius: 2.5px;
+  background: #A39480;
+  transition: all 0.15s ease;
+}
+.paginate.left {
+  position: fixed; bottom: 60px; left: 0; right: 0; z-index: 900;
+  left: 32%;
+}
+.paginate.left i {
+  transform-origin: 0% 50%;
+}
+.paginate.left i:first-child {
+  transform: translate(0, -1px) rotate(40deg);
+}
+.paginate.left i:last-child {
+  transform: translate(0, 1px) rotate(-40deg);
+}
+.paginate.left:hover i:first-child {
+  transform: translate(0, -1px) rotate(30deg);
+}
+.paginate.left:hover i:last-child {
+  transform: translate(0, 1px) rotate(-30deg);
+}
+.paginate.left:active i:first-child {
+  transform: translate(1px, -1px) rotate(25deg);
+}
+.paginate.left:active i:last-child {
+  transform: translate(1px, 1px) rotate(-25deg);
+}
+.paginate.left[data-state=disabled] i:first-child {
+  transform: translate(-5px, 0) rotate(0deg);
+}
+.paginate.left[data-state=disabled] i:last-child {
+  transform: translate(-5px, 0) rotate(0deg);
+}
+.paginate.left[data-state=disabled]:hover i:first-child {
+  transform: translate(-5px, 0) rotate(0deg);
+}
+.paginate.left[data-state=disabled]:hover i:last-child {
+  transform: translate(-5px, 0) rotate(0deg);
+}
+.paginate.right {
+  position: fixed; bottom: 60px; left: 0; right: 0; z-index: 900;
+  left: 60%;
+}
+.paginate.right i {
+  transform-origin: 100% 50%;
+}
+.paginate.right i:first-child {
+  transform: translate(0, 1px) rotate(40deg);
+}
+.paginate.right i:last-child {
+  transform: translate(0, -1px) rotate(-40deg);
+}
+.paginate.right:hover i:first-child {
+  transform: translate(0, 1px) rotate(30deg);
+}
+.paginate.right:hover i:last-child {
+  transform: translate(0, -1px) rotate(-30deg);
+}
+.paginate.right:active i:first-child {
+  transform: translate(1px, 1px) rotate(25deg);
+}
+.paginate.right:active i:last-child {
+  transform: translate(1px, -1px) rotate(-25deg);
+}
+.paginate.right[data-state=disabled] i:first-child {
+  transform: translate(5px, 0) rotate(0deg);
+}
+.paginate.right[data-state=disabled] i:last-child {
+  transform: translate(5px, 0) rotate(0deg);
+}
+.paginate.right[data-state=disabled]:hover i:first-child {
+  transform: translate(5px, 0) rotate(0deg);
+}
+.paginate.right[data-state=disabled]:hover i:last-child {
+  transform: translate(5px, 0) rotate(0deg);
+}
+.paginate[data-state=disabled] {
+  opacity: 0.3;
+  cursor: default;
+}
+.counter {
+  text-align: center;
+  position: fixed; bottom: 70px; left: 0; right: 0; z-index: 900;
+  width: 100%;
+  margin-top: -15px;
+  font-size: 30px;
+  font-family: Helvetica, sans-serif;
+  text-shadow: 0px 2px 0px rgba(0, 0, 0, 0.2);
+  color: #A39480;
+}
+
+/*灰色主题*/
+ .toollist_gray { 	border-top: 1px solid #3D3D46; 	background-image:linear-gradient(top, #697077, #464A53 60%, #3F434E); 	background-image:-o-linear-gradient(top, #697077, #464A53 60%, #3F434E); 	background-image:-ms-linear-gradient(top, #697077, #464A53 60%, #3F434E); 	background-image:-moz-linear-gradient(top, #697077, #464A53 60%, #3F434E); 	background-image:-webkit-linear-gradient(top, #697077, #464A53 60%, #3F434E );  	box-shadow: 0 1px 0 #949494 inset; 	-moz-box-shadow:0 1px 0 #949494 inset; 	-webkit-box-shadow:0 1px 0 #949494 inset; 	-o-box-shadow:0 1px 0 #949494 inset; } .toollist_gray li{ border-right: 1px solid rgba(128, 128, 128, 0.6);} .toollist_gray li a {color: #fff;}
+
+/*底部固定工具条*/
+#tool { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
+ul.toollist { position: fixed; z-index: 900; bottom: 0; left: 0; right: 0;margin: auto; display: block; height: 54px;}
+.toollist li{ float:left;width: auto;  height: 100%;width:25%;
+position: static!important;  margin: 0;
+border-radius: 0!important; -webkit-box-sizing: border-box;
+box-sizing: border-box; -webkit-box-flex: 1; box-flex: 1;
+-webkit-box-sizing: border-box; box-shadow: none!important; background: none;
+}
+.toollist li a {font-size: 20px;line-height: 20px;text-align: center;display: block;text-decoration: none;padding-top: 2px;position:relative;}
+.toollist li a img{width:30px;height:30px;}
+.toollist li a p{margin: 1px 0 1px 0;font-size: 14px;display: block !important;line-height: 18px;text-align: center;}
+
+
+*{margin:0; padding:0; border:0; font-size:4vw; font-family:Microsoft YaHei; color:#333}
+ol,li,ul{margin:0; padding:0;list-style: none}
+a{text-decoration:none;}
+
+p{color:white}
+.whole{width:100%;height:100%; max-width:640px; margin:0 auto; }
+.banner{width:100%; height:100%; float:left; overflow:hidden;}
+.banner img{width:100%; height:auto;}
+.tpnav{width:98%; height:100%; margin:3vw 0 0 2%; display:inline; float:left; }
+.tpnav li{width:30%; height:100%;  padding:3vw 0; float:left; color:#FFF; line-height:6vw; margin:0 1vw; display:inline; border-radius:2vw; text-align:center; overflow:hidden;}
+.tpnav li span{font:6vw bold; color:#FFF}
+.ybj1{background:#09F;}
+.ybj2{background:#C63;}
+.ybj3{background:#93C;}
+.search{width:94%;height:100%; float:left; margin:3vw 3% 0 3%; overflow:hidden; display:inline}
+.tpinputbox{width:75%; height:8vw; border: solid 1px #CC0000; border-radius:2vw; float:left;}
+.tptj{width:20%; height:8vw; border: solid 1px #CC0000; border-radius:2vw; float:right; background:#CC0000; color:#FFF}
+.pro{width:98%; float:left; padding-left:2%;  overflow:hidden; margin-top:3vw;}
+.pro ul{margin:0; padding:0;}
+.pro ul li{width:47%;line-height:5vw; float:left; background:#e9ecee;overflow:hidden; margin:1vw; overflow:hidden;}
+.pro ul li a img{width:100%; height:40vw; float:left; margin:0; padding:0; border:0;}
+.pro ul li .pr1{width:94%; height:9vw; line-height:5vw; padding:3%; float:left; overflow:hidden;}
+.pro ul li .pr2{width:94%;  height:8vw; line-height:5vw; padding:3%; float:left; overflow:hidden;}
+.pro ul li .pr2 .pr2aa{float:left;height:8vw; }
+.pro ul li .pr2 .pr2bb{float:right;height:8vw; }
+.pro ul li .pr3{width:42vw; height:10vw; line-height:5vw; padding:2vw; float:left; overflow:hidden;}
+.pro ul li .pr3 a{width:40vw; height:8vw; line-height:8vw; border-radius:2vw; color:#FFF; float:left; text-align:center; background:#F00;}
+
+</style>
+<script src="${BasePath}/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="${BasePath}/js/app/turentable/jQueryRotate.2.2.js"></script>
+<script type="text/javascript" src="${BasePath}/js/app/turentable/jquery.easing.min.js"></script>
+<script type="text/javascript">
+	function voteAccess(voteApplyId,objId){ 
+		 $.ajax({ 
+		        type: 'POST', 
+		        url:'${BasePath}/vote/voteAccess.kq?sVoteApplyId='+voteApplyId, 
+		        dataType: 'json', 
+		        cache: false, 
+		        error: function(data){ 
+		            //document.getElementById("tip").style.display="block";	 
+		            return false; 
+		        }, 
+		        success:function(data){ 
+		        	var voteCount=data[0].voteCount;
+		        	if(voteCount!=undefined){
+		        		document.getElementById(objId).innerHTML=voteCount;
+		        	}
+		        	var hasVote=data[0].hasVote;
+		        	if(hasVote!=undefined){
+		        		alert("您已经投过票");
+		        	}
+		        	
+		      	}    
+		 });
+	}
+	
+</script>
+
+</head>
+<body>
+	<div class="banner" style="position:relative;"><img src="../images/banner2.jpg">
+	
+	   <div id="tickerContainer" style="position:absolute;right:0px;top:120px;z-index:999;background-color:rgba(0,0,0,0);">
+	      <dl id="ticker">
+	        <dt class="heading" ><span style="font-size:20px;color:green;">第一名:小明(100票)</span></dt>
+	        <dt class="heading"><span style="font-size:20px;color:red;">第二名:小鹏(100票)</span></dt>
+	        <dt class="heading"><span style="font-size:20px;color:blue;">第三名:小亮(100票)</span></dt>
+	      </dl>
+	    </div>
+	
+	</div>
+	<div class="blank11"></div>
+	 
+    <script type="text/javascript">
+	  $(function() {
+		var ticker = $("#ticker");
+		ticker.children().filter("dt").each(function() {
+		  var dt = $(this),
+		    container = $("<div>");
+		  dt.next().appendTo(container);
+		  dt.prependTo(container);
+		  container.appendTo(ticker);
+		});
+		ticker.css("overflow", "hidden");
+		function animator(currentItem) {
+		  var distance = currentItem.height();
+			duration = (distance + parseInt(currentItem.css("marginTop"))) / 0.025;
+		  currentItem.animate({ marginTop: -distance }, duration, "linear", function() {
+			currentItem.appendTo(currentItem.parent()).css("marginTop", 0);
+			animator(currentItem.parent().children(":first"));
+		  }); 
+		};
+		animator(ticker.children(":first"));
+		ticker.mouseenter(function() {
+		  ticker.children().stop();
+		});
+		ticker.mouseleave(function() {
+		  animator(ticker.children(":first"));
+		});
+	  });
+    </script>
+	
+	
+	
+<div class="tpnav">
+    <ul>
+        <li class="ybj1">参与人<br/><span>${signCount?default("0")}</span></li>
+        <li class="ybj2">投票数<br/><span>${voteTotalCount?default("0")}</span></li>
+        <li class="ybj3">浏览量<br/><span>${lookCount?default("0")}</span></li>
+    </ul>
+</div>
+<form id="formId" action="${BasePath}/vote/searchService.kq" method="post">
+<div class="search">
+    <input type="text" name="inputContent" id="textfield" class="tpinputbox" value="请输入工号或姓名" onFocus="if(value==defaultValue){value='';this.style.color='#000'}" onBlur="if(!value){value=defaultValue;this.style.color='#999'}" style="color:#999999">
+    <input type="submit"   name="button" id="button" value="搜索" class="tptj">
+</div>
+</form>
+
+<form id="qcust" action="${BasePath}/vote/getIndexInformation.kq" method="post">
+<div class="pro">
+<#if pageFinder?? && (pageFinder.data)?? >
+	     <#list pageFinder.result as item>		
+    <ul>
+      <li>
+            <a href="#"><img src="${BasePath}/${item.imgUrl?default("images/banner.jpg")}" ></a>
+            <div class="pr1"><a href="#">${item.content?default("")}</a></div>
+            <div class="pr2">
+            <span style="float:left">编号:</span>
+                <div class="pr2aa">${item.code?default("")}</div>   
+                <div class="pr2bb"><span id="${item.id}" style="color:#F00">${item.voteCount?default("0")}</span>票</div>
+            </div>
+            <div class="pr3"><a href="javascript:voteAccess('${item.code}','${item.id}')"> 投他一票</a></div>
+       </li>
+    </ul>
+    </#list>
+    
+    <div class="blank20"></div>
+<!-- 翻页标签 -->
+<#import "../app-common.ftl"  as page>
+<@page.queryForm formId="qcust" />   
+    	
+  <#else>
+  		<div class="yt-tb-list-no">暂无内容</div>
+</#if>
+
+
+
+
+
+</div>
+</form>
+
+
+
+
+<div id="tool">
+	<ul class="toollist toollist_gray">
+		<li><a href="${BasePath}/vote/getIndexInformation.kq"><img src="../images/home.jpg"><p>首页</p></a>
+		</li>
+		<li><a href="${BasePath}/vote/voteApplyRankService.kq"><img src="../images/rank.png"><p>排行榜</p></a>
+		</li>
+		<#if hasVoteApply == 2>
+		<li><a href="javascript:tishi2();"><img src="../images/apply.png"><p>我要报名</p></a>
+		</li>
+		<#elseif hasVoteApply == 1>
+		<li><a href="javascript:tishi();"><img src="../images/apply.png"><p>我要报名</p></a>
+		</li>
+		<#else>
+		<li><a href="${BasePath}/vote/voteApplyIndex.kq"><img src="../images/apply.png"><p>我要报名</p></a>
+		</li>
+		</#if>
+		<li><a href="${BasePath}/vote/activitesInfomation.kq"><img src="../images/activity.png"><p>活动说明</p></a>
+		</li>
+	</ul>
+</div>
+
+<div class="div-height"></div>
+<!--
+<div class="counter"></div>
+<button class="paginate left"><i></i><i></i></button>
+<button class="paginate right"><i></i><i></i></button>
+-->
+
+<script>
+var pr = document.querySelector( '.paginate.left' );
+var pl = document.querySelector( '.paginate.right' );
+pr.onclick = slide.bind( this, -1 );
+pl.onclick = slide.bind( this, 1 );
+var index = 0, total = 30;
+function slide(offset) {
+  index = Math.min( Math.max( index + offset, 0 ), total - 1 );
+  document.querySelector( '.counter' ).innerHTML = ( index + 1 ) + ' / ' + total;
+  pr.setAttribute( 'data-state', index === 0 ? 'disabled' : '' );
+  pl.setAttribute( 'data-state', index === total - 1 ? 'disabled' : '' );
+}
+slide(0);
+  </script>
+
+
+
+</body>
+<script type="text/javascript" src='${BasePath}/js/jquery.js'></script>
+<script type="text/javascript">
+
+(function(){
+if(!window.addEventListener) {
+  return;
+}
+var self = window.StyleFix = {
+  link: function(link) {
+    try {
+      if(link.rel !== 'stylesheet' || link.hasAttribute('data-noprefix')) {
+        return;
+      }
+    }
+    catch(e) {
+      return;
+    }
+    var url = link.href || link.getAttribute('data-href'),
+        base = url.replace(/[^\/]+$/, ''),
+        base_scheme = (/^[a-z]{3,10}:/.exec(base) || [''])[0],
+        base_domain = (/^[a-z]{3,10}:\/\/[^\/]+/.exec(base) || [''])[0],
+        base_query = /^([^?]*)\??/.exec(url)[1],
+        parent = link.parentNode,
+        xhr = new XMLHttpRequest(),
+        process;
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState === 4) {
+        process();
+      }
+    };
+    process = function() {
+        var css = xhr.responseText;
+        if(css && link.parentNode && (!xhr.status || xhr.status < 400 || xhr.status > 600)) {
+          css = self.fix(css, true, link);
+          if(base) {
+            css = css.replace(/url\(\s*?((?:"|')?)(.+?)\1\s*?\)/gi, function($0, quote, url) {
+              if(/^([a-z]{3,10}:|#)/i.test(url)) { // Absolute & or hash-relative
+                return $0;
+              }
+              else if(/^\/\//.test(url)) { // Scheme-relative
+                return 'url("' + base_scheme + url + '")';
+              }
+              else if(/^\//.test(url)) { // Domain-relative
+                return 'url("' + base_domain + url + '")';
+              }
+              else if(/^\?/.test(url)) { // Query-relative
+                return 'url("' + base_query + url + '")';
+              }
+              else {
+                return 'url("' + base + url + '")';
+              }
+            });
+            var escaped_base = base.replace(/([\\\^\$*+[\]?{}.=!:(|)])/g,"\\$1");
+            css = css.replace(RegExp('\\b(behavior:\\s*?url\\(\'?"?)' + escaped_base, 'gi'), '$1');
+            }
+          var style = document.createElement('style');
+          style.textContent = css;
+          style.media = link.media;
+          style.disabled = link.disabled;
+          style.setAttribute('data-href', link.getAttribute('href'));
+          parent.insertBefore(style, link);
+          parent.removeChild(link);
+          style.media = link.media; // Duplicate is intentional. See issue #31
+        }
+    };
+    try {
+      xhr.open('GET', url);
+      xhr.send(null);
+    } catch (e) {
+      if (typeof XDomainRequest != "undefined") {
+        xhr = new XDomainRequest();
+        xhr.onerror = xhr.onprogress = function() {};
+        xhr.onload = process;
+        xhr.open("GET", url);
+        xhr.send(null);
+      }
+    }
+    link.setAttribute('data-inprogress', '');
+  },
+  styleElement: function(style) {
+    if (style.hasAttribute('data-noprefix')) {
+      return;
+    }
+    var disabled = style.disabled;
+    style.textContent = self.fix(style.textContent, true, style);
+    style.disabled = disabled;
+  },
+  styleAttribute: function(element) {
+    var css = element.getAttribute('style');
+    css = self.fix(css, false, element);
+    element.setAttribute('style', css);
+  },
+  process: function() {
+    $('link[rel="stylesheet"]:not([data-inprogress])').forEach(StyleFix.link);
+    $('style').forEach(StyleFix.styleElement);
+    $('[style]').forEach(StyleFix.styleAttribute);
+  },
+  register: function(fixer, index) {
+    (self.fixers = self.fixers || [])
+      .splice(index === undefined? self.fixers.length : index, 0, fixer);
+  },
+  fix: function(css, raw, element) {
+    for(var i=0; i<self.fixers.length; i++) {
+      css = self.fixers[i](css, raw, element) || css;
+    }
+    return css;
+  },
+  camelCase: function(str) {
+    return str.replace(/-([a-z])/g, function($0, $1) { return $1.toUpperCase(); }).replace('-','');
+  },
+  deCamelCase: function(str) {
+    return str.replace(/[A-Z]/g, function($0) { return '-' + $0.toLowerCase() });
+  }
+};
+(function(){
+  setTimeout(function(){
+    $('link[rel="stylesheet"]').forEach(StyleFix.link);
+  }, 10);
+  document.addEventListener('DOMContentLoaded', StyleFix.process, false);
+})();
+function $(expr, con) {
+  return [].slice.call((con || document).querySelectorAll(expr));
+}
+})();
+(function(root){
+if(!window.StyleFix || !window.getComputedStyle) {
+  return;
+}
+function fix(what, before, after, replacement, css) {
+  what = self[what];
+  if(what.length) {
+    var regex = RegExp(before + '(' + what.join('|') + ')' + after, 'gi');
+    css = css.replace(regex, replacement);
+  }
+  return css;
+}
+var self = window.PrefixFree = {
+  prefixCSS: function(css, raw, element) {
+    var prefix = self.prefix;
+    if(self.functions.indexOf('linear-gradient') > -1) {
+      css = css.replace(/(\s|:|,)(repeating-)?linear-gradient\(\s*(-?\d*\.?\d*)deg/ig, function ($0, delim, repeating, deg) {
+        return delim + (repeating || '') + 'linear-gradient(' + (90-deg) + 'deg';
+      });
+    }
+    css = fix('functions', '(\\s|:|,)', '\\s*\\(', '$1' + prefix + '$2(', css);
+    css = fix('keywords', '(\\s|:)', '(\\s|;|\\}|$)', '$1' + prefix + '$2$3', css);
+    css = fix('properties', '(^|\\{|\\s|;)', '\\s*:', '$1' + prefix + '$2:', css);
+    if (self.properties.length) {
+      var regex = RegExp('\\b(' + self.properties.join('|') + ')(?!:)', 'gi');
+      css = fix('valueProperties', '\\b', ':(.+?);', function($0) {
+        return $0.replace(regex, prefix + "$1")
+      }, css);
+    }
+    if(raw) {
+      css = fix('selectors', '', '\\b', self.prefixSelector, css);
+      css = fix('atrules', '@', '\\b', '@' + prefix + '$1', css);
+    }
+    css = css.replace(RegExp('-' + prefix, 'g'), '-');
+    css = css.replace(/-\*-(?=[a-z]+)/gi, self.prefix);
+    return css;
+  },
+  property: function(property) {
+    return (self.properties.indexOf(property)? self.prefix : '') + property;
+  },
+  value: function(value, property) {
+    value = fix('functions', '(^|\\s|,)', '\\s*\\(', '$1' + self.prefix + '$2(', value);
+    value = fix('keywords', '(^|\\s)', '(\\s|$)', '$1' + self.prefix + '$2$3', value);
+    return value;
+  },
+  prefixSelector: function(selector) {
+    return selector.replace(/^:{1,2}/, function($0) { return $0 + self.prefix })
+  },
+  prefixProperty: function(property, camelCase) {
+    var prefixed = self.prefix + property;
+    return camelCase? StyleFix.camelCase(prefixed) : prefixed;
+  }
+};
+(function() {
+  var prefixes = {},
+    properties = [],
+    shorthands = {},
+    style = getComputedStyle(document.documentElement, null),
+    dummy = document.createElement('div').style;
+  var iterate = function(property) {
+    if(property.charAt(0) === '-') {
+      properties.push(property);
+      var parts = property.split('-'),
+        prefix = parts[1];
+      prefixes[prefix] = ++prefixes[prefix] || 1;
+      while(parts.length > 3) {
+        parts.pop();
+        var shorthand = parts.join('-');
+        if(supported(shorthand) && properties.indexOf(shorthand) === -1) {
+          properties.push(shorthand);
+        }
+      }
+    }
+  },
+  supported = function(property) {
+    return StyleFix.camelCase(property) in dummy;
+  }
+  if(style.length > 0) {
+    for(var i=0; i<style.length; i++) {
+      iterate(style[i])
+    }
+  }
+  else {
+    for(var property in style) {
+      iterate(StyleFix.deCamelCase(property));
+    }
+  }
+  var highest = {uses:0};
+  for(var prefix in prefixes) {
+    var uses = prefixes[prefix];
+    if(highest.uses < uses) {
+      highest = {prefix: prefix, uses: uses};
+    }
+  }
+  self.prefix = '-' + highest.prefix + '-';
+  self.Prefix = StyleFix.camelCase(self.prefix);
+  self.properties = [];
+  for(var i=0; i<properties.length; i++) {
+    var property = properties[i];
+    if(property.indexOf(self.prefix) === 0) { // we might have multiple prefixes, like Opera
+      var unprefixed = property.slice(self.prefix.length);
+      if(!supported(unprefixed)) {
+        self.properties.push(unprefixed);
+      }
+    }
+  }
+  // IE fix
+  if(self.Prefix == 'Ms'
+    && !('transform' in dummy)
+    && !('MsTransform' in dummy)
+    && ('msTransform' in dummy)) {
+    self.properties.push('transform', 'transform-origin');
+  }
+  self.properties.sort();
+})();
+
+(function() {
+var functions = {
+  'linear-gradient': {
+    property: 'backgroundImage',
+    params: 'red, teal'
+  },
+  'calc': {
+    property: 'width',
+    params: '1px + 5%'
+  },
+  'element': {
+    property: 'backgroundImage',
+    params: '#foo'
+  },
+  'cross-fade': {
+    property: 'backgroundImage',
+    params: 'url(a.png), url(b.png), 50%'
+  }
+};
+functions['repeating-linear-gradient'] =
+functions['repeating-radial-gradient'] =
+functions['radial-gradient'] =
+functions['linear-gradient'];
+var keywords = {
+  'initial': 'color',
+  'zoom-in': 'cursor',
+  'zoom-out': 'cursor',
+  'box': 'display',
+  'flexbox': 'display',
+  'inline-flexbox': 'display',
+  'flex': 'display',
+  'inline-flex': 'display',
+  'grid': 'display',
+  'inline-grid': 'display',
+  'min-content': 'width'
+};
+self.functions = [];
+self.keywords = [];
+var style = document.createElement('div').style;
+function supported(value, property) {
+  style[property] = '';
+  style[property] = value;
+  return !!style[property];
+}
+for (var func in functions) {
+  var test = functions[func],
+    property = test.property,
+    value = func + '(' + test.params + ')';
+  if (!supported(value, property)
+    && supported(self.prefix + value, property)) {
+    self.functions.push(func);
+  }
+}
+for (var keyword in keywords) {
+  var property = keywords[keyword];
+  if (!supported(keyword, property)
+    && supported(self.prefix + keyword, property)) {
+    self.keywords.push(keyword);
+  }
+}
+
+})();
+(function() {
+var
+selectors = {
+  ':read-only': null,
+  ':read-write': null,
+  ':any-link': null,
+  '::selection': null
+},
+atrules = {
+  'keyframes': 'name',
+  'viewport': null,
+  'document': 'regexp(".")'
+};
+self.selectors = [];
+self.atrules = [];
+var style = root.appendChild(document.createElement('style'));
+function supported(selector) {
+  style.textContent = selector + '{}';  // Safari 4 has issues with style.innerHTML
+  return !!style.sheet.cssRules.length;
+}
+for(var selector in selectors) {
+  var test = selector + (selectors[selector]? '(' + selectors[selector] + ')' : '');
+  if(!supported(test) && supported(self.prefixSelector(test))) {
+    self.selectors.push(selector);
+  }
+}
+for(var atrule in atrules) {
+  var test = atrule + ' ' + (atrules[atrule] || '');
+  if(!supported('@' + test) && supported('@' + self.prefix + test)) {
+    self.atrules.push(atrule);
+  }
+}
+root.removeChild(style);
+})();
+self.valueProperties = [
+  'transition',
+  'transition-property'
+]
+root.className += ' ' + self.prefix;
+StyleFix.register(self.prefixCSS);
+})(document.documentElement);
+
+
+$(function(){
+				//$(".pr2aa").html("*"+$(".pr2aa").html().substr(1,3));
+				$(".pr2aa").each(function(){
+    			//$(this).html($(this).html().substr(1,2));
+    			
+    			var result="";
+    			var str=$(this).html();
+    			var num=str.substr(str.length-5,str.length-5);
+    			//var name=str.substr(0,str.length-10);
+    			
+    			result=num;
+    			$(this).html(result);
+    			
+    			
+  				});
+			});
+function tishi() {
+	alert("您已经报过名！");
+}
+function tishi2() {
+	alert("游客不能报名！");
+}				
+
+</script>
+</html>

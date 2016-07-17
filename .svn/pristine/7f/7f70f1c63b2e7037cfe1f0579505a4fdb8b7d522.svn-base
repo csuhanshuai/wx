@@ -1,0 +1,290 @@
+package com.qixin.app.turntable.service;
+
+import java.io.Serializable;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.qixin.app.lanterngame.model.AttachInfo;
+import com.qixin.app.turntable.dao.ActivityInfoDao;
+import com.qixin.app.turntable.dao.AwardDao;
+import com.qixin.app.turntable.dao.CustomerDao;
+import com.qixin.app.turntable.dao.LotteryRecordDao;
+import com.qixin.app.turntable.dao.WinnersDao;
+import com.qixin.app.turntable.model.ActivityInfo;
+import com.qixin.app.turntable.model.Award;
+import com.qixin.app.turntable.model.Customer;
+import com.qixin.app.turntable.model.LotteryRecord;
+import com.qixin.app.turntable.model.Winners;
+import com.qixin.app.zjminweb.common.CommonTool;
+import com.qixin.app.zjminweb.model.Integralexchangerecord;
+import com.qixin.app.zjminweb.model.Member;
+import com.qixin.app.zjminweb.service.IntegralexchangerecordService;
+import com.qixin.app.zjminweb.service.MemberService;
+import com.qixin.platform.persistent.database.basedao.CritMap;
+import com.qixin.platform.persistent.database.basedao.PageFinder;
+import com.qixin.platform.persistent.database.basedao.Query;
+
+@Service
+public class TurntableService
+{
+    @Resource
+    private AwardDao awardDao;
+
+    @Resource
+    private WinnersDao winnersDao;
+
+    @Resource
+    private CustomerDao customerDao;
+
+    @Resource
+    private ActivityInfoDao activityInfoDao;
+    
+    @Resource
+    private LotteryRecordDao lotteryRecordDao;
+    
+
+    @Resource
+    private IntegralexchangerecordService integralexchangerecordservice;
+
+    @Resource
+    private MemberService memberservice; 
+
+    
+    
+    
+    
+    public List<Award> getAward()
+    {
+
+        return awardDao.getAll();
+    }
+
+    public Award getAwardByid(int id)
+    {
+
+        return awardDao.getById(id);
+    }
+
+    public void updateAward(List<Award> list)
+    {
+
+        for (Award a : list)
+        {
+
+            try
+            {
+                awardDao.save(a);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void updateAward(Award a)
+    {
+
+        try
+        {
+            awardDao.save(a);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    public Customer getQualifications(String openid, String activitiesid)
+    {
+
+        List<Customer> list = customerDao.find(
+                "from Customer where openid=? and status=0 and activitiesid=?",
+                openid, activitiesid);
+        if (list != null && list.size() >= 1)
+        {
+
+            Customer c = list.get(0);
+            c.setStatus(1);
+            try
+            {
+                // customerDao.save(c);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return c;
+        }
+        else
+        {
+
+            return null;
+        }
+    }
+
+    public void addWinners(Winners winners)
+    {
+
+        try
+        {
+            winnersDao.save(winners);
+        }
+        catch (Exception e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void updateWinners(String[] ids)
+    {
+
+        Winners winners = null;
+
+        try
+        {
+            for (String id : ids)
+            {
+
+                winners = winnersDao.getById(Integer.parseInt(id));
+                winners.setTicket(1);
+                winnersDao.save(winners);
+
+                // 还需要更新 奖品兑换表的信息
+                Member member = this.memberservice.getMemberByOpenid(winners
+                        .getOpenid());
+                Integralexchangerecord record = this.integralexchangerecordservice
+                        .getIntegralexchangerecordBytype(member.getId(),
+                                winners.getActivitiesid(), "1");
+                if (record != null)
+                {
+                    record.setIsuse("1");
+                    record.setUsertime(CommonTool
+                            .getNowDate("yyyy-MM-dd HH:mm:ss"));
+                    this.integralexchangerecordservice
+                            .updateIntegralexchangerecord(record);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public PageFinder<Winners> getWinnersList(Winners winners, Query query) {
+		CritMap critMap = new CritMap();
+		if (winners.getCompany() != null && winners.getCompany() != "")
+			critMap.addLike("company", winners.getCompany());
+		if (winners.getTel() != null && winners.getTel() != "")
+			critMap.addLike("tel", winners.getTel());
+		if (winners.getName() != null && winners.getName() != "")
+			critMap.addLike("name", winners.getName());
+		if (winners.getTicket() != 3)
+			critMap.addEqual("ticket", winners.getTicket());
+		critMap.addEqual("activitiesid", winners.getActivitiesid());
+		return winnersDao.pagedByCritMap(critMap, query.getPage(), query
+				.getPageSize());
+	}
+
+    public Winners getWinners(String openid, String activitiesid) {
+		CritMap critMap = new CritMap();
+		critMap.addLike("openid", openid);
+		critMap.addEqual("ticket", 0);
+		critMap.addEqual("activitiesid", activitiesid);
+		return winnersDao.getObjectByCritMap(critMap);
+	}
+
+    public List<Winners> getWinnersList() {
+		return winnersDao.getAll();
+	}
+
+    public void addCustomer(Customer c) {
+		try {
+			customerDao.save(c);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+    public ActivityInfo getActivityInfo() {
+		List<ActivityInfo> infoList = activityInfoDao.getAll();
+		if (infoList != null && infoList.size() >= 1) {
+			return infoList.get(0);
+		}
+		return null;
+	}
+
+    public void updateActivityInfo(String str, String prompt) {
+		try {
+			ActivityInfo info = new ActivityInfo();
+			info.setId(1);
+			info.setInfo(str);
+			info.setPrompt(prompt);
+			activityInfoDao.save(info);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+    
+    
+    public PageFinder<LotteryRecord> getLotteryRecordList(
+			LotteryRecord lotteryRecord, Query query) {
+		CritMap critMap = new CritMap();
+		critMap.addEqual("activitiesid", lotteryRecord.getActivitiesid());
+		if (lotteryRecord.getEmpName() != null
+				&& lotteryRecord.getEmpName() != "") {
+			critMap.addLike("empName", lotteryRecord.getEmpName());
+		}
+		if (lotteryRecord.getJobNumber() != null
+				&& lotteryRecord.getJobNumber() != "") {
+			critMap.addEqual("jobNumber", lotteryRecord.getJobNumber());
+		}
+		if (lotteryRecord.getAward() != null && !lotteryRecord.getAward().equals("-1")) {
+			critMap.addEqual("award", lotteryRecord.getAward());
+		}
+		if (lotteryRecord.getIsGet() != null &&lotteryRecord.getIsGet() != -1) {
+			critMap.addEqual("isGet", lotteryRecord.getIsGet());
+		}
+		
+		return lotteryRecordDao.pagedByCritMap(critMap, query.getPage(), query
+				.getPageSize());
+	}
+    
+    
+    public List<LotteryRecord> getLotteryRecordListByjobNumber(String jobNumber){
+    	CritMap critMap = new CritMap();
+    	critMap.addEqual("jobNumber",jobNumber);
+    	return lotteryRecordDao.findByCritMap(critMap, true);
+    }
+   
+    
+    
+    
+    public void addLotteryRecord(LotteryRecord lotteryRecord) {
+		try {
+			lotteryRecordDao.save(lotteryRecord);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+   
+    
+    public LotteryRecord  updateLotteryRecord(LotteryRecord lotteryRecord) {
+			return lotteryRecordDao.merge(lotteryRecord);
+	}
+    
+	public LotteryRecord getLotteryRecordById(Serializable id) {
+		return lotteryRecordDao.getById(id);
+	}
+    
+
+}

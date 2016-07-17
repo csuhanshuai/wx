@@ -1,0 +1,24 @@
+package com.qixin.app.lanterngame.test;
+
+import java.util.List;
+
+import org.junit.Test;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.qixin.app.lanterngame.model.AttachInfo;
+import com.qixin.app.lanterngame.service.LanternGameService;
+
+public class AttachInfoServiceTest {
+	
+	@Test
+	 public void addAttachInfoTest(){
+		 BeanFactory factory = new ClassPathXmlApplicationContext("applicationContext.xml");
+		 
+		 LanternGameService aImpl = (LanternGameService) factory.getBean("aService");
+		 List<AttachInfo> as =   aImpl.getAllAttachInfo();
+		for (AttachInfo attach : as) {
+			System.out.println(attach.getId());
+		}
+	 }
+}

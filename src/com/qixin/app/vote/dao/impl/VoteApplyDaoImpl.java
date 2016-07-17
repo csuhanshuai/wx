@@ -1,0 +1,63 @@
+package com.qixin.app.vote.dao.impl;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.springframework.stereotype.Repository;
+
+import com.qixin.app.vote.dao.IVoteApplyDao;
+import com.qixin.app.vote.model.VoteApply;
+import com.qixin.app.vote.model.WxVote;
+import com.qixin.platform.persistent.database.basedao.HibernateEntityDao;
+@Repository
+public class VoteApplyDaoImpl extends HibernateEntityDao<VoteApply> implements IVoteApplyDao {
+	@Override
+	public VoteApply getVoteApplyByCode(String codeID) throws Exception {
+		SessionFactory sessionFactory = getSessionFactory();
+		SessionFactoryImplementor  s = (SessionFactoryImplementor)sessionFactory;
+		Connection conn =null;
+		PreparedStatement prep = null;
+		ResultSet rst = null;
+		VoteApply va=new VoteApply();
+		try {
+			 conn =	s.getConnectionProvider().getConnection();
+			 prep = conn.prepareStatement("select id,code,name,title,content,img_Id,link_Man,link_mobel_number,description ,vote_count,status,check_id,check_time from vote_apply where code like ?");
+			 prep.setString(1, codeID);
+			 rst = prep.executeQuery();
+			 while(rst.next()){
+			 	 va.setId(rst.getString(1));
+			 	 va.setCode(rst.getString(2));
+			 	 va.setName(rst.getString(3));
+			 	 va.setTitle(rst.getString(4));
+			 	 va.setContent(rst.getString(5));
+			 	 va.setImgId(rst.getString(6));
+			 	 va.setLinkMan(rst.getString(7));
+			 	 va.setLinkMobelNumber(rst.getString(8));
+			 	 va.setDescription(rst.getString(9));
+			 	 va.setVoteCount(rst.getInt(10));
+			 	 va.setStatus(rst.getInt(11));
+			 	 va.setCheckId(rst.getString(12));
+			 	 va.setCheckTime(rst.getDate(13));
+			 }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			rst.close();
+			prep.close();
+			conn.close();
+		}
+		return va;
+	}
+
+	
+	
+	
+	
+	
+}

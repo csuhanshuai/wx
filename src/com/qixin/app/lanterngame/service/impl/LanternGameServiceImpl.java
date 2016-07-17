@@ -1,0 +1,489 @@
+package com.qixin.app.lanterngame.service.impl;
+
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.qixin.app.lanterngame.dao.IActInfoDao;
+import com.qixin.app.lanterngame.dao.IAttachInfoDao;
+import com.qixin.app.lanterngame.dao.IEmpInfoDao;
+import com.qixin.app.lanterngame.dao.IEmpScoreDao;
+import com.qixin.app.lanterngame.dao.IQuizGameRecordDao;
+import com.qixin.app.lanterngame.dao.IQuizTopicDao;
+import com.qixin.app.lanterngame.dao.IQuizTopicReplyDao;
+import com.qixin.app.lanterngame.dao.IUserMedalDao;
+import com.qixin.app.lanterngame.dao.IjferUserDao;
+import com.qixin.app.lanterngame.model.ActInfo;
+import com.qixin.app.lanterngame.model.AttachInfo;
+import com.qixin.app.lanterngame.model.EmpInfo;
+import com.qixin.app.lanterngame.model.EmpScore;
+import com.qixin.app.lanterngame.model.IjferUser;
+import com.qixin.app.lanterngame.model.QuizGameRecord;
+import com.qixin.app.lanterngame.model.QuizTopic;
+import com.qixin.app.lanterngame.model.QuizTopicReply;
+import com.qixin.app.lanterngame.model.UserMedal;
+import com.qixin.app.lanterngame.service.LanternGameService;
+import com.qixin.app.lanterngame.util.Utils;
+import com.qixin.app.vote.model.Vote;
+import com.qixin.app.vote.model.VoteApply;
+import com.qixin.app.vote.model.WxVote;
+import com.qixin.platform.persistent.database.basedao.CritMap;
+import com.qixin.platform.persistent.database.basedao.PageFinder;
+import com.qixin.platform.persistent.database.basedao.Query;
+
+@Service
+@Transactional
+public class LanternGameServiceImpl implements LanternGameService {
+	@Resource
+	private IAttachInfoDao attachInfoDao;
+	@Resource
+	private IActInfoDao actInfoDao;
+	@Resource
+	private IQuizTopicDao quizTopicDao;
+	@Resource
+	private IEmpScoreDao empScoreDao;
+	@Resource
+	private IQuizGameRecordDao quizGameRecordDao;
+	@Resource
+	private IQuizTopicReplyDao quizTopicReplyDao;
+	@Resource
+	private IEmpInfoDao empInfoDao;
+	
+	
+	@Resource
+	private IjferUserDao ijferUserDao;
+	
+	@Resource
+	private IUserMedalDao iUserMedalDao;
+	
+	@Override
+	public String addAttachInfo(AttachInfo attachInfo) throws Exception {
+			
+			return (String) attachInfoDao.save(attachInfo);
+	}
+
+	@Override
+	public String addUserMedal(UserMedal userMedal) throws Exception {
+			
+			return (String) iUserMedalDao.save(userMedal);
+	}
+
+	
+	@Override
+	public String deleteAttachInfoById(String id) throws Exception {
+		
+		return (String) attachInfoDao.removeById(id);
+	}
+
+	@Override
+	public AttachInfo updateAttachInfo(AttachInfo attachInfo) {
+		return attachInfoDao.merge(attachInfo);
+		
+	}
+
+	@Override
+	public List<AttachInfo> getAllAttachInfo() {
+		return attachInfoDao.getAll();
+	}
+
+	@Override
+	public ActInfo getActInfoById(String id) throws Exception {
+		
+		return actInfoDao.getById(id);
+	}
+
+	@Override
+	public ActInfo updateActInfo(ActInfo actInfo) throws Exception {
+		
+		return actInfoDao.merge(actInfo);
+	}
+
+	@Override
+	public String addQuizTopic(QuizTopic quizTopic) throws Exception {
+		// TODO Auto-generated method stub
+		return (String) quizTopicDao.save(quizTopic);
+	}
+
+	@Override
+	public List<QuizTopic> getAllQuizTopic() {
+		
+		return quizTopicDao.getAll();
+	}
+
+	@Override
+	public String saveAnswerRecord(QuizGameRecord quizGameRecord) throws Exception {
+		
+		return (String) quizGameRecordDao.save(quizGameRecord);
+	}
+
+	@Override
+	public QuizGameRecord updateAnswerRecord(QuizGameRecord quizGameRecord) {
+		
+		return quizGameRecordDao.merge(quizGameRecord);
+	}
+
+	@Override
+	public String saveAnswerRecordQuestion(QuizTopicReply quizTopicReply) throws Exception {
+		
+		return (String) quizTopicReplyDao.save(quizTopicReply);
+	}
+
+	@Override
+	public QuizTopicReply updateAnswerRecordQuestion(
+			QuizTopicReply quizTopicReply) {
+		
+		return quizTopicReplyDao.merge(quizTopicReply);
+	}
+
+	@Override
+	public String saveEmpScore(EmpScore empScore) throws Exception {
+		
+		return (String) empScoreDao.save(empScore);
+	}
+
+	public QuizTopicReply getTopicReplyById(String id){
+		return quizTopicReplyDao.getById(id);
+	}
+	
+	@Override
+	public EmpInfo checkIsEmp(String empNum, String empName) {
+		empNum = Utils.addZeroForJobNumbe(empNum);
+		//判断员工是否存在
+		CritMap critMap = new CritMap();
+		critMap.addEqual("jobNumber", empNum);
+		critMap.addEqual("empName", empName);
+		return empInfoDao.getObjectByCritMap(critMap, true);
+		
+	}
+	
+	public int handleNotAnswer(String recordId){
+		int count = 0;
+		
+		CritMap critMap = new CritMap();
+		critMap.addEqual("gameRecordId", recordId);	
+		
+		List<QuizTopicReply> list = quizTopicReplyDao.findByCritMap(critMap, true);
+		if (null != list && list.size()>0){
+			for (QuizTopicReply reply : list){
+				
+				if (null == reply.getEndTime() && null != reply.getBeginTime()){
+					reply.setEndTime(new Date());
+					reply.setAnswerResult("");
+					int spenTime = (int)(reply.getEndTime().getTime()-reply.getBeginTime().getTime())/1000;
+					reply.setReplySpendTime(spenTime);
+					count ++;
+					
+					try {
+						quizTopicReplyDao.save(reply);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		return count;
+	}
+
+	@Override
+	public EmpScore updateEmpScore(EmpScore empScore) {
+		
+		return empScoreDao.merge(empScore);
+	}
+
+
+
+	@Override
+	public AttachInfo findAttachInfoByPara(String desc,String suffix)  {
+		CritMap critMap = new CritMap();
+		critMap.addEqual("description", desc);
+		critMap.addEqual("suffix", suffix);
+		return attachInfoDao.getObjectByCritMap(critMap, true);
+	}
+
+	@Override
+	public EmpScore getEmpScoreByPara(String empNum, String empName) {
+		empNum=Utils.addZeroForJobNumbe(empNum);
+		CritMap critMap = new CritMap();
+		critMap.addEqual("jobNumber", empNum);
+		critMap.addEqual("empName", empName);
+		return empScoreDao.getObjectByCritMap(critMap, true);
+	}
+	
+	@Override
+	public int isExistReply(String recordId, String jobNum,String topicId) {
+		int result = 0;
+		//empNum=Utils.addZeroForJobNumbe(empNum);
+		CritMap critMap = new CritMap();
+		critMap.addEqual("gameRecordId", recordId);
+		critMap.addEqual("replyJobNumber", jobNum);
+		critMap.addEqual("topicId", topicId);
+		QuizTopicReply quizTopicReply =quizTopicReplyDao.getObjectByCritMap(critMap, true);
+		if(null!=quizTopicReply)
+			{
+			if(null==quizTopicReply.getReplySpendTime())
+			result = 1;
+			else
+			result = 2;
+			}
+		return result;
+	}
+
+	@Override
+	public QuizTopic getQuizTopicById(String id) {
+		
+		return quizTopicDao.getById(id);
+	}
+
+	@Override
+	public int checkIsCanGame(String empNum) {
+		empNum=Utils.addZeroForJobNumbe(empNum);
+		CritMap critMap = new CritMap();
+		critMap.addEqual("jobNumber", empNum);
+		EmpScore empScore = empScoreDao.getObjectByCritMap(critMap, true);
+		if(empScore==null){
+			return 1;
+		}else {
+			if(empScore.getPlayCount()<empScore.getCanPlayCount()){
+				return 2;
+			}else {
+				return 3;
+			}
+			
+		}
+		}
+		
+	@Override
+	public QuizTopic getTopic(String topicId) {
+		//获得题目
+		List<QuizTopic> list = new ArrayList<QuizTopic>();
+		
+		try
+		{
+		list  = quizTopicDao.queryTopicTop(topicId);
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		if(list.size()==0)
+			return null;
+		return (QuizTopic)list.get(0);
+	}
+	
+	
+
+	@Override
+	public int getTotalScore(String recordId) {
+		//获得题目
+		int score = 0;
+		try
+		{
+			score  = quizGameRecordDao.queryGameScore(recordId);
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		return score;
+	}
+
+	
+	@Override
+	public EmpScore getEmpScoreByJobNum(String jobNum) {
+		jobNum=Utils.addZeroForJobNumbe(jobNum);
+		CritMap critMap = new CritMap();
+		critMap.addEqual("jobNumber", jobNum);
+		
+		return empScoreDao.getObjectByCritMap(critMap, true);
+	}
+
+	@Override
+	public List<EmpScore> queryEmpScoreTop() throws SQLException {
+		
+		return empScoreDao.queryEmpScoreTop();
+		
+	}
+
+	@Override
+	public List<EmpScore> queryEmpScoreTop2(String jobNumber)
+			throws SQLException {
+		jobNumber=Utils.addZeroForJobNumbe(jobNumber);
+		CritMap critMap = new CritMap();
+		critMap.addEqual("jobNumber", jobNumber);
+		EmpScore e = empScoreDao.getObjectByCritMap(critMap, true);
+		List<EmpScore> empScores = empScoreDao.queryEmpScoreTop();
+		empScores.add(e);
+		return empScores;
+	}
+
+	
+	@Override
+	public PageFinder<QuizGameRecord>  getQuizGameRecordList(
+			Map<String, Object> conditionMap, Query query) {
+		CritMap critMap = new CritMap();
+		if (conditionMap.get("jobNumber") != null) {
+			String jobNum = (String) conditionMap.get("jobNumber");
+			jobNum = Utils.addZeroForJobNumbe(jobNum);
+			critMap.addEqual("jobNumber", jobNum);
+		}
+		if (conditionMap.get("empName") != null) {
+			String username = (String) conditionMap.get("empName");
+			critMap.addEqual("empName", username);
+		}
+		return quizGameRecordDao.pagedByCritMap(critMap, query.getPage(),query.getPageSize());
+	}
+	
+	
+	@Override
+	public List<QuizTopicReply> getQuizTopicReplyByRecordId(String gameRecordId) {
+		CritMap critMap = new CritMap();
+		critMap.addEqual("gameRecordId", gameRecordId);
+		return quizTopicReplyDao.findByCritMap(critMap, true);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Override
+	public List<QuizTopic> queryQuizTopicByPage(int pageSize, int page) {
+		 CritMap critMap = new CritMap();
+		 Query query = new Query();
+		 query.setPage(page);
+		 query.setPageSize(pageSize);
+		return quizTopicDao.pagedByCritMap(critMap, query.getPage(), query.getPageSize()).getData();
+	}
+
+	@Override
+	public QuizTopic updateQuizTopic(QuizTopic quiz) {
+		return quizTopicDao.merge(quiz);
+	}
+	
+	
+	
+	@Override
+	public QuizGameRecord queryQuizGameRecordById(String id) {
+		return quizGameRecordDao.getById(id);
+	}
+
+	
+	
+	
+	
+	
+	@Override
+	public Serializable deleteQuizTopicById(Serializable itemId) throws Exception {
+		return quizTopicDao.removeById(itemId);
+	}
+
+	@Override
+	public String saveActInfo(ActInfo actInfo) throws Exception {
+		
+		return (String) actInfoDao.save(actInfo);
+	}
+
+	@Override
+	public PageFinder<ActInfo> findActInfoByPageFinder(Query query) {
+		CritMap critMap = new CritMap();
+		return actInfoDao.pagedByCritMap(critMap, query.getPage(), query.getPageSize());
+	}
+
+	@Override
+	public AttachInfo getAttachInfoById(String id) {
+		
+		return attachInfoDao.getById(id);
+	}
+
+	@Override
+	public boolean removActInfo(String id) throws Exception{
+		ActInfo actInfo = actInfoDao.getById(id); 
+		if (actInfo != null)
+        {
+            this.actInfoDao.remove(actInfo);
+            return true;
+        }
+        return false;
+		
+	}
+
+
+	@Override
+	public EmpInfo updateEmpInfo(EmpInfo empInfo) {
+		
+		return empInfoDao.merge(empInfo);
+	}
+
+
+	@Override
+	public IjferUser checkIsEmpIjferUser(String empNum, String empName) {
+		String empNo = Utils.addZeroForJobNumbe(empNum);
+		//判断员工是否存在
+		CritMap critMap = new CritMap();
+		critMap.addEqual("workNo", empNo);
+		critMap.addEqual("empName", empName);
+		return ijferUserDao.getObjectByCritMap(critMap, true);
+	}
+	
+	public IjferUser getEmpIjferUserByWorkNo(String wokeNo) {
+		String empNo = Utils.addZeroForJobNumbe(wokeNo);
+		//判断员工是否存在
+		CritMap critMap = new CritMap();
+		critMap.addEqual("workNo", empNo);
+		return ijferUserDao.getObjectByCritMap(critMap, true);
+	}
+
+
+	@Override
+	public Integer saveIjferUser(IjferUser ijferUser) throws Exception {
+		
+		return (Integer)ijferUserDao.save(ijferUser);
+	}
+
+
+	@Override
+	public IjferUser updateIjferUser(IjferUser ijferUser) {
+		
+		return ijferUserDao.merge(ijferUser);
+	}
+
+	
+	@Override
+	public PageFinder<QuizTopic> findQuizTopicByPageFinder(Query query) {
+		CritMap critMap = new CritMap();
+		return quizTopicDao.pagedByCritMap(critMap, query.getPage(), query.getPageSize());
+	}
+
+	@Override
+	public UserMedal getUserMedal(String empNum, String empName) throws Exception {
+		String empNo = Utils.addZeroForJobNumbe(empNum);
+		CritMap critMap = new CritMap();
+		critMap.addEqual("jobNumber", empNo);
+		critMap.addEqual("empName", empName);
+		return iUserMedalDao.getObjectByCritMap(critMap, true);
+	}
+
+	@Override
+	public UserMedal updateUserMedal(UserMedal userMedal) {
+		return iUserMedalDao.merge(userMedal);
+	}
+	
+	
+	
+	
+}

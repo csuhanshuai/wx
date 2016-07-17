@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=480,user-scalable=yes,uc-user-scalable=yes,target-densitydpi=high-dpi"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="icon" href="share_2.png" mce_href="share_2.png" type="image/x-icon">
+    <script language="javascript" type="text/javascript" src="/wx/js/jj.js"></script>
+    
+    <title>杰客大冒险 - JointForce小游戏</title>
+<style>
+	body{margin:0px; background-color:#434243; color:#6A6A6A;}
+	.bandiv{float:left; width:100%; background-color:#DBD1BB;}
+		.bandiv div{padding:10px; text-align:left;}
+</style>
+
+
+
+
+
+
+</head>
+<body onload="main()" lang="http://g.3gunman.com" id="0">
+
+<script language="javascript" type="text/javascript" src="/wx/js/jj.js"></script>
+
+
+<script language="javascript" type="text/javascript" src="/wx/js/min.js"></script>
+
+<iframe  width="0" height="0" id="myiframe"></iframe>
+	<form id="myform"  method="post" target="myiframe"></form>
+
+<!--<form id =" myform" method="post" action="qweqwasd.kq" onSubmit="return test()" style="display:none"/>"-->   
+  
+<!--<input type="hidden" name="paramsHidden" id="paramsHidden"/>-->
+  
+  
+<!--</form>-->
+<!--<input type="button" id="btnLoad"  value="加载" class="btn"  name="btnLoad" onclick="test()" style="display:none";/>-->
+
+<div style="text-align:center;">
+	<canvas id="jsGameScreen"> 
+	</canvas> 
+</div>
+
+		<script language=javascript>
+		
+		var mebtnopenurl = 'https://www.jointforce.com/jetchat/app?tail=youxi';
+		window.shareData = {
+		        "imgUrl": "https://www.jointforce.com/jfoperating/jkdmx/logo.jpg",
+		        "timeLineLink": "https://www.jointforce.com/jetchat/app?tail=youxi",
+		        "tTitle": "杰客大冒险 - JointForce小游戏",
+		        "tContent": "用绳命在玩的游戏"
+		};
+		
+	//	function test(){
+	//	alert(1);
+         //           var d = 'test';
+            //        $.ajax({
+            //        url: "checkCanPlay.kq",
+            //        contentType: 'application/json',
+            //        data: "{'str':'" + d + "'}",
+            //        type: 'POST',
+            //        success: function (data) {
+            //            alert("成功");
+             //       }, error: function (a, b, c) {
+                        
+           //         }
+           //     });
+		
+		
+
+		var score;
+		function dp_submitScore(m,t){
+		//	if(t>1000){
+				//	alert("不错哦！得了"+t+"分！");
+				dp_share(t);
+			//}
+			score=t;
+
+		}
+		
+		function submitScore(t){
+			
+			var form=document.getElementById("myformid");
+			form["score"].value=t;
+			form.submit();
+		}
+		
+		function dp_share(t){
+			document.title = "我得了" + t + "分！用绳命在玩的游戏，快来挑战一下！";
+			document.getElementById("share").style.display="block";
+			window.shareData.tTitle = document.title;
+
+			document.getElementById("share").addEventListener("click",function(){
+				this.style.display="none"
+			})
+		}
+		function dp_Ranking(){
+			//alert("到更多");
+			window.location=mebtnopenurl;
+		}
+
+  var form = document.getElementById("myform");
+    	form.action="${BasePath}/jackgame/addPlayCount.kq";
+			form.submit();
+	}
+		function showAd(){
+		}
+		function hideAd(){
+		}
+		document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+		    
+		    WeixinJSBridge.on('menu:share:appmessage', function(argv) {
+		        WeixinJSBridge.invoke('sendAppMessage', {
+		            "img_url": window.shareData.imgUrl,
+		            "link": window.shareData.timeLineLink,
+		            "desc": window.shareData.tContent,
+		            "title": window.shareData.tTitle
+		        }, function(res) {
+		        	document.location.href = mebtnopenurl;
+		        })
+		    });
+
+		    WeixinJSBridge.on('menu:share:timeline', function(argv) {
+		        WeixinJSBridge.invoke('shareTimeline', {
+		            "img_url": window.shareData.imgUrl,
+		            "img_width": "640",
+		            "img_height": "640",
+		            "link": window.shareData.timeLineLink,
+		            "desc": window.shareData.tContent,
+		            "title": window.shareData.tTitle
+		        }, function(res) {
+		        $("#myform").submit();
+		        	//document.location.href = mebtnopenurl;
+		        	
+		        });
+		    });
+		}, false);
+		
+
+		function closeshare() {
+			document.getElementById("share").style.display = "none";
+		}
+
+
+		
+		</script>
+		
+<form  id="myformid" action="gameEnd.kq" style="display: none;float: inherit">
+		<input type="text" name="score"/>
+	</form>
+
+<div id="sortDiv"  style="display:none;position:absolute;top:600px;left:700px;width:10%;height:10%;z-index:10000;">
+	<p>排行榜</p><img src="2001.png" onclick="submitScore(score)"/>
+</div>
+
+<div id=share style="display:none;position:absolute;top:0px;left:0px;width:100%;height:100%;z-index:10000;">
+	<p style="text-align: right; padding-left: 10px;">
+		<img src="/wx/images/2001.png" style="max-width: 280px;top:0px; padding-right: 25px;"></img>
+	</p>
+</div>
+
+
+</body>
+</html>

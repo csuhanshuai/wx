@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html><head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Type" content="application/x-www-form-urlencoded; charset=UTF-8">
+<meta name=“viewport” content=“width=device-width， initial-scale=1.0”>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta http-equiv="Expires" content="-1">  
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes">
+<title>我要报名</title>
+	<script src="${BasePath}/js/jquery-1.11.2.min.js"></script>
+	<script src="${BasePath}/js/jquery.dialogBox.js"></script>
+	<link rel="stylesheet" type="text/css" href="${BasePath}/css/jquery.dialogbox.css">
+<script type="text/javascript">
+    var hasVoteApply = ${hasVoteApply};
+</script>
+<style>
+
+.div-height{width:100%; height:54px ;display:inline-block;} 
+
+
+/*底部固定工具条*/
+#tool { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
+ul.toollist { position: fixed; z-index: 900; bottom: 0; left: 0; right: 0;margin: auto; display: block; height: 54px;}
+.toollist li{ float:left;width: auto;  height: 100%;width:25%;
+position: static!important;  margin: 0;
+border-radius: 0!important; -webkit-box-sizing: border-box;
+box-sizing: border-box; -webkit-box-flex: 1; box-flex: 1;
+-webkit-box-sizing: border-box; box-shadow: none!important; background: none;
+}
+.toollist li a {font-size: 20px;line-height: 20px;text-align: center;display: block;text-decoration: none;padding-top: 2px;position:relative;}
+.toollist li a img{width:30px;height:30px;}
+.toollist li a p{margin: 1px 0 1px 0;font-size: 14px;display: block !important;line-height: 18px;text-align: center;}
+
+p{color:white}  
+/*灰色主题*/
+
+.toollist_gray {
+
+	border-top: 1px solid #3D3D46;
+
+	background-image:linear-gradient(top, #697077, #464A53 60%, #3F434E);
+
+	background-image:-o-linear-gradient(top, #697077, #464A53 60%, #3F434E);
+
+	background-image:-ms-linear-gradient(top, #697077, #464A53 60%, #3F434E);
+
+	background-image:-moz-linear-gradient(top, #697077, #464A53 60%, #3F434E);
+
+	background-image:-webkit-linear-gradient(top, #697077, #464A53 60%, #3F434E );
+
+
+
+	box-shadow: 0 1px 0 #949494 inset;
+
+	-moz-box-shadow:0 1px 0 #949494 inset;
+
+	-webkit-box-shadow:0 1px 0 #949494 inset;
+
+	-o-box-shadow:0 1px 0 #949494 inset;
+
+}
+
+.toollist_gray li{ border-right: 1px solid rgba(128, 128, 128, 0.6);}
+
+.toollist_gray li a {color: #fff;}
+
+
+
+
+
+*{margin:0; padding:0; border:0; font-size:4vw; font-family:Microsoft YaHei; color:#333}
+ol,li,ul{margin:0; padding:0;list-style: none}
+a{text-decoration:none;}
+
+
+
+
+.banner{width:100%; height:100%; float:left; overflow:hidden;}
+.banner img{width:100%; height:auto;}
+.conter{width:100%; height:100%; float:left; margin: 3vw auto;}
+.conter li{width:98%; float:left; margin:3vw 0 0 2%;}
+.conter li span{width:13%; line-height:7vw;  float:left; color:#000; }
+.sur{width:78%; height:7vw; line-height:7vw; border:solid 1px #999999; float:left;  padding:0 2%; border-radius:2vw;color:#333}
+.surd{width:78%; height:20vw; line-height:7vw; border:solid 1px #999999; float:left;  padding:0 2%; border-radius:2vw;}
+.shangc{width:20vw; height:20vw; background:#dadbdc;float:left; margin-right:2vw; text-align:center;border-radius:2vw;}
+.anniu{width:96%; height:10vw; line-height:10vw; float:left; text-align:center; background:#F00; color:#FFF; font-size:5vw; border-radius:2vw;}
+</style>
+
+<script type="text/javascript">
+	var BasePath="${BasePath}"; 
+    var code = ${code?default('-1')}
+</script>
+
+<script>
+function tishi(){
+alert("您已经报过名了！");
+}
+
+
+
+
+//检测文件大小
+function checkSize(fileName){
+//var file = form.FileUpload;
+  var file=document.getElementById("fileUpload-0");
+  
+    //var fso = new ActiveXObject("Scripting.FileSystemObject"); 
+    //var f = fso.GetFile(file); 
+    //alert( '大小: '+f.Size+ 'bytes '); 
+  
+  //alert(1);
+  //alert(file.fileSize);
+  if(file.fileSize>1*1024*1024){
+      alert("上传文件不能超过1M");
+      return false;
+  }else{
+	return true;
+  }
+}
+
+//检测文件类型
+function checkExd(fileName){
+if(fileName.lastIndexOf(".")+1>=fileName.length){
+//document.write(fileName);
+ alert("上传文件不存在，或目标类型不匹配！只支持gif,jpg,jpeg,png,bmp格式的图片！");//上传文件不存在，或目标类型不匹配！
+ 	return false;
+ }
+var exd=fileName.substring(fileName.lastIndexOf(".")+1).toUpperCase();
+if(exd=="GIF"||exd=="JPG"||exd=="PNG"||exd=="BMP"||exd=="JPEG"){
+ return true;
+ }
+else {
+ alert("上传文件不存在，或目标类型不匹配！只支持gif,jpg,jpeg,png,bmp格式的图片！");
+   return false;
+ }
+}  
+
+function checkinput(){
+   var form = document.getElementById("question_form");
+   
+   
+    // var file = form.fileUpload;
+   var file=document.getElementById("item-img-value-0");
+   if (checkExd(file.value)&&checkSize(file.value)){
+	   if(hasVoteApply==2){
+	       alert("游客不能报名");
+	       return;
+	   }
+   
+	    var title = form.title;
+		if(title.value.trim().length==0){
+			var titleClear = document.getElementById("title");
+			title.focus();
+			alert("请输入标题");
+			//titleClear.innerHTML="请输入标题";
+			return;
+		}
+		
+		var content = form.content;
+		if(content.value.trim().length==0){
+		alert("请输入内容");
+			var contentClear = document.getElementById("content");
+			content.focus();
+			//contentClear.innerHTML="请输入内容";
+			return;
+		}
+		
+		var linkMan = form.linkMan;
+		if(linkMan.value.trim().length==0){
+			var linkManClear = document.getElementById("linkMan");
+			linkMan.focus();
+			alert("请输入姓名");
+			//linkManClear.innerHTML="请输入姓名";
+			return;
+		}
+		var type = /^1[3|4|5|8|7][0-9]\d{8}$/;
+	    var re = new RegExp(type);
+	    var linkMobelNumber = form.linkMobelNumber;  
+	    
+	    if(linkMobelNumber.value.trim().length==0){
+			var linkMobelNumberClear = document.getElementById("linkMobelNumber");
+			linkMobelNumberClear.focus();
+			alert("请输入手机号码");
+			//maxSubmitTimeClear.innerHTML="请输入最长答题时间";
+			return;
+		}
+	    
+	    	if(!linkMobelNumber.value.match(re)){
+			var linkMobelNumberClear = document.getElementById("linkMobelNumber");
+			linkMobelNumberClear.focus();
+			alert("手机号码格式不正确，请重新输入");
+			//maxSubmitTimeClear.innerHTML="请输入两位正整数";
+			return;
+		}
+	//var button =	 document.getElementById("button")
+	//button.disabled= "disabled";
+        if(confirm("上传和填写的资料必须符合活动标准")){
+	   	 	form.submit();
+        }		
+   }else{ 
+	 	return;
+   }
+
+   
+   
+}
+        
+</script>
+
+
+
+<link href='${BasePath}/css/app/zj/other/other.css' rel='stylesheet' type='text/css' />
+
+<script type='text/javascript' src='${BasePath}/js/global.js'></script>
+<script type='text/javascript' src='${BasePath}/js/plugin/operamasks/operamasks-ui.min.js'></script>
+<script type='text/javascript' src='${BasePath}/js/wechat.js'></script>
+<!--[if lte IE 9]><script type='text/javascript' src='${BasePath}/js/jquery.watermark-1.3.js'></script>
+<![endif]-->
+<script src="${BasePath}/js/app/zjmall/qxmall.js"></script>
+
+ 
+ 
+ <script>
+        
+        
+jQuery.extend({
+
+
+    createUploadIframe: function (id, uri) {
+        //create frame
+        var frameId = 'jUploadFrame' + id;
+        var iframeHtml = '<iframe id="' + frameId + '" name="' + frameId + '" style="position:absolute; top:-9999px; left:-9999px"';
+        if (window.ActiveXObject) {
+            if (typeof uri == 'boolean') {
+                iframeHtml += ' src="' + 'javascript:false' + '"';
+
+            }
+            else if (typeof uri == 'string') {
+                iframeHtml += ' src="' + uri + '"';
+
+            }
+        }
+        iframeHtml += ' />';
+        jQuery(iframeHtml).appendTo(document.body);
+
+        return jQuery('#' + frameId).get(0);
+    },
+    createUploadForm: function (id, fileElementId, data) {
+        //create form	
+        var formId = 'jUploadForm' + id;
+        var fileId = 'jUploadFile' + id;
+        var form = jQuery('<form  action="" method="POST" name="' + formId + '" id="' + formId + '" enctype="multipart/form-data"></form>');
+        if (data) {
+            for (var i in data) {
+                if (data[i].name != null && data[i].value != null) {
+                    jQuery('<input type="hidden" name="' + data[i].name + '" value="' + data[i].value + '" />').appendTo(form);
+                } else {
+                    jQuery('<input type="hidden" name="' + i + '" value="' + data[i] + '" />').appendTo(form);
+                }
+            }
+        }
+        var oldElement = jQuery('#' + fileElementId);
+        var newElement = jQuery(oldElement).clone();
+        jQuery(oldElement).attr('id', fileId);
+        jQuery(oldElement).before(newElement);
+        jQuery(oldElement).appendTo(form);
+        //set attributes
+        jQuery(form).css('position', 'absolute');
+        jQuery(form).css('top', '-1200px');
+        jQuery(form).css('left', '-1200px');
+        jQuery(form).appendTo('body');
+        return form;
+    },
+
+    ajaxFileUpload: function (s) {
+        // TODO introduce global settings, allowing the client to modify them for all requests, not only timeout		
+        s = jQuery.extend({}, jQuery.ajaxSettings, s);
+        var id = new Date().getTime()
+        var form = jQuery.createUploadForm(id, s.fileElementId, (typeof (s.data) == 'undefined' ? false : s.data));
+        var io = jQuery.createUploadIframe(id, s.secureuri);
+        var frameId = 'jUploadFrame' + id;
+        var formId = 'jUploadForm' + id;
+        // Watch for a new set of requests
+        if (s.global && !jQuery.active++) {
+            jQuery.event.trigger("ajaxStart");
+        }
+        var requestDone = false;
+        // Create the request object
+        var xml = {}
+        if (s.global)
+            jQuery.event.trigger("ajaxSend", [xml, s]);
+        // Wait for a response to come back
+        var uploadCallback = function (isTimeout) {
+            var io = document.getElementById(frameId);
+            try {
+                if (io.contentWindow) {
+                    xml.responseText = io.contentWindow.document.body ? io.contentWindow.document.body.innerHTML : null;
+                    xml.responseXML = io.contentWindow.document.XMLDocument ? io.contentWindow.document.XMLDocument : io.contentWindow.document;
+
+                } else if (io.contentDocument) {
+                    xml.responseText = io.contentDocument.document.body ? io.contentDocument.document.body.innerHTML : null;
+                    xml.responseXML = io.contentDocument.document.XMLDocument ? io.contentDocument.document.XMLDocument : io.contentDocument.document;
+                }
+            } catch (e) {
+                jQuery.handleError(s, xml, null, e);
+            }
+            if (xml || isTimeout == "timeout") {
+                requestDone = true;
+                var status;
+                try {
+                    status = isTimeout != "timeout" ? "success" : "error";
+                    // Make sure that the request was successful or notmodified
+                    if (status != "error") {
+                        // process the data (runs the xml through httpData regardless of callback)
+                        var data = jQuery.uploadHttpData(xml, s.dataType);
+                        // If a local callback was specified, fire it and pass it the data
+                        if (s.success)
+                            s.success(data, status);
+
+                        // Fire the global callback
+                        if (s.global)
+                            jQuery.event.trigger("ajaxSuccess", [xml, s]);
+                    } else
+                        jQuery.handleError(s, xml, status);
+                } catch (e) {
+                    status = "error";
+                    jQuery.handleError(s, xml, status, e);
+                }
+
+                // The request was completed
+                if (s.global)
+                    jQuery.event.trigger("ajaxComplete", [xml, s]);
+
+                // Handle the global AJAX counter
+                if (s.global && ! --jQuery.active)
+                    jQuery.event.trigger("ajaxStop");
+
+                // Process result
+                if (s.complete)
+                    s.complete(xml, status);
+
+                jQuery(io).unbind()
+
+                setTimeout(function () {
+                    try {
+                        jQuery(io).remove();
+                        jQuery(form).remove();
+
+                    } catch (e) {
+                        jQuery.handleError(s, xml, null, e);
+                    }
+
+                }, 100)
+
+                xml = null
+
+            }
+        }
+        // Timeout checker
+        if (s.timeout > 0) {
+            setTimeout(function () {
+                // Check to see if the request is still happening
+                if (!requestDone) uploadCallback("timeout");
+            }, s.timeout);
+        }
+        try {
+
+            var form = jQuery('#' + formId);
+            jQuery(form).attr('action', s.url);
+            jQuery(form).attr('method', 'POST');
+            jQuery(form).attr('target', frameId);
+            if (form.encoding) {
+                jQuery(form).attr('encoding', 'multipart/form-data');
+            }
+            else {
+                jQuery(form).attr('enctype', 'multipart/form-data');
+            }
+            jQuery(form).submit();
+
+        } catch (e) {
+            jQuery.handleError(s, xml, null, e);
+        }
+
+        jQuery('#' + frameId).load(uploadCallback);
+        return { abort: function () { } };
+
+    },
+
+    uploadHttpData: function (r, type) {
+        var data = !type;
+        if (!type)
+            data = r.responseText;
+        if (type == "xml")
+            data = r.responseXML;
+        //data = type == "xml" || data ? r.responseXML : r.responseText;
+        // If the type is "script", eval it in global context
+        if (type == "script")
+            jQuery.globalEval(data);
+        // Get the JavaScript object, if JSON is used.
+        if (type == "json") {
+            ////////////Fix the issue that it always throws the error "unexpected token '<'"///////////////  
+            data = r.responseText;
+            var start = data.indexOf(">");
+            if (start != -1) {
+                var end = data.indexOf("<", start + 1);
+                if (end != -1) {
+                    data = data.substring(start + 1, end);
+                }
+            }
+            ///////////////////////////////////////////////////////////////////////////////////////////////  
+            eval("data = " + data);
+        }
+        // evaluate scripts within html
+        if (type == "html")
+            jQuery("<div>").html(data).evalScripts();
+
+        return data;
+    },
+
+    handleError: function (s, xhr, status, e) {
+        // If a local callback was specified, fire it
+        if (s.error) {
+            s.error.call(s.context || s, xhr, status, e);
+        }
+
+        // Fire the global callback
+        if (s.global) {
+            (s.context ? jQuery(s.context) : jQuery.event).trigger("ajaxError", [xhr, s, e]);
+        }
+    	}
+	})
+
+			function uploadFile(){
+        		 var file_id = this.id;
+        		 $.ajaxFileUpload({
+					 url: BasePath+'/uploadImageFile.kq',
+					 secureuri: false,
+					 fileElementId: file_id,
+					 data:{
+					 	do_action:'msgFileUpload',
+					 },
+					 type:'POST',
+					 dataType:'json',
+					 success: function (data, status) {
+
+					 	var id = this.fileElementId;
+					 	var index = id.substring(id.length-1);
+					 	$("#item-img-"+index).attr("src",BasePath+"/"+data.imgpath);
+					 	$("#item-img-value-"+index).attr("value",data.imgpath);
+					 	$("#"+id).change(uploadFile);
+					 	$("#cnt-wrapper-"+index).show();
+					 }
+				 });
+        	}
+
+        	$(function(){
+        		if(code==0){
+        			alert("操作成功!");
+        		}
+        		if(code==1){
+        			alert("操作失败!");
+        		}
+        		$("input[name=FileUpload]").change(uploadFile);
+        	});
+        	
+        	
+        	
+        	
+        	
+        	
+        </script>
+		
+		
+
+</head>
+<body style="background:#eeefef;">
+<div class="banner"><img src="../images/zhufu.jpg">
+   
+</div>
+
+
+<div class="conter">
+
+  <form name="form1" method="post" action="${BasePath}/vote/voteApply.kq" id="question_form">
+
+    <ul>
+        <li><span>标题</span><input  maxlength="10" name="title" id="title"  class="sur"    placeholder="最多不超过10个字" value="" onFocus="if(value==defaultValue){value='';this.style.color='#000'}" onBlur="if(!value){value=defaultValue;this.style.color='#999'}" style="color:#999999"></li>
+        <li><span>内容</span><textarea maxlength="40" name="content" id="content" class="surd"  placeholder="最多不超过40个字" onFocus="if(value==defaultValue){value='';this.style.color='#000'}" onBlur="if(!value){value=defaultValue;this.style.color='#999'}" style="color:#999999"></textarea>
+        </li>
+        
+        <li>
+        <label>上传图片</label>
+        <div class="rows">       
+        <span class="input">
+            <img style="max-width: 170px;max-height: 170px;"  src="" id="item-img-0" />
+            <input type="hidden" name="imgUrlHidden" id="item-img-value-0" value="">
+        	<div class="item-head" style="display: inline-block;width: 310px;">
+            <input type="file" name="FileUpload" class="fileUpload" id="fileUpload-0" />
+            <div class="wn-upload">
+            </div>
+        </div>
+        </span>
+        </li>
+        
+        <li></li>
+        <li><span>姓名</span><input maxlength="10" type="text" name="linkMan" id="linkMan" class="sur" placeholder="最多不超过10个字" value="" onFocus="if(value==defaultValue){value='';this.style.color='#000'}" onBlur="if(!value){value=defaultValue;this.style.color='#999'}" style="color:#999999"></li>
+        <li><span>手机</span> <input maxlength="11" type="text" name="linkMobelNumber" id="linkMobelNumber"  class="sur"  placeholder="11位手机号码" value="" onFocus="if(value==defaultValue){value='';this.style.color='#000'}" onBlur="if(!value){value=defaultValue;this.style.color='#999'}" style="color:#999999"></li>
+        <li><h1>报名须知</h1>1、员工可以晒出收到部门（或其他人）相应的中秋祝福，或给送其他人中秋祝福的感动瞬间。<br>
+        2、图片或者视频中包含自己（他人）以及收到的礼物，可以多张图合成一张。<br>
+              
+        </li>
+        <li style=color:red>3、报名需提交真实照片，虚假的照片和报名信息视为无效！每个参与者只可报名一次，报名信息一经提交不能修改，请慎重提交！</li>
+        
+ 
+        
+        
+      <li>  <input type="button" name="button" id="buttonDia" value="参与报名" class="anniu" onClick="javascript:checkinput()"></li>
+    </ul>
+   
+  </form>
+</div>
+<div id="dialog"></div>
+
+<div class="div-height"></div> 
+<div id="tool">
+	<ul class="toollist toollist_gray">
+		<li><a href="${BasePath}/vote/getIndexInformation.kq"><img src="../images/home.jpg"><p>首页</p></a>
+		</li>
+		<li><a href="${BasePath}/vote/voteApplyRankService.kq"><img src="../images/rank.png"><p>排行榜</p></a>
+		</li>
+		<li><a href="${BasePath}/vote/voteApplyIndex.kq"><img src="../images/apply.png"><p>我要报名</p></a>
+		</li>
+		<li><a href="${BasePath}/vote/activitesInfomation.kq"><img src="../images/activity.png"><p>活动说明</p></a>
+		</li>
+	</ul>
+</div>
+</body>
+</html>
